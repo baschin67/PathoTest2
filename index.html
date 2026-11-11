@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Offline, interactive 227-question pathophysiology quiz: Cancer Part 1, Cancer Part 2, and Musculoskeletal.">
+  <title>PATH Practice Lab | 227 Questions</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fa;
+      --panel: #fff;
+      --panel-soft: #f9fafc;
+      --text: #172132;
+      --muted: #617085;
+      --border: #dde3eb;
+      --accent: #245da7;
+      --accent-soft: #e8f0fd;
+      --accent-contrast: #fff;
+      --correct: #166b4c;
+      --correct-bg: #e8f7f0;
+      --correct-border: #a9dbc1;
+      --wrong: #af3542;
+      --wrong-bg: #fff0f0;
+      --wrong-border: #f0c3c9;
+      --shadow: 0 14px 44px rgba(25,47,82,.06);
+      --round: 16px;
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #101724;
+      --panel: #192332;
+      --panel-soft: #202c3c;
+      --text: #f1f4f9;
+      --muted: #abbacf;
+      --border: #344458;
+      --accent: #87baff;
+      --accent-soft: #263f61;
+      --accent-contrast: #091625;
+      --correct: #a4f2cb;
+      --correct-bg: #183f32;
+      --correct-border: #2e7356;
+      --wrong: #ffc0c5;
+      --wrong-bg: #482932;
+      --wrong-border: #894854;
+      --shadow: 0 18px 40px rgba(0,0,0,.14);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button,input { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { opacity: .42; cursor: not-allowed; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+    .topbar { background: var(--panel); border-bottom: 1px solid var(--border); }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 76px; }
+    .brand { display: flex; gap: 12px; align-items: center; text-decoration: none; color: inherit; }
+    .brand-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 13px; color: white; background: #245da7; font-size: 21px; font-weight: 700; }
+    .brand-title { font-size: 16px; line-height: 1.2; font-weight: 800; letter-spacing: -.02em; }
+    .brand-caption { color: var(--muted); font-size: 12px; letter-spacing: .01em; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .save-indicator { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+    .save-dot { height: 8px; width: 8px; border-radius: 50%; background: #2ca077; }
+    .icon-button { background: var(--panel-soft); border: 1px solid var(--border); color: var(--text); width: 37px; height: 37px; border-radius: 11px; font-size: 17px; }
+    .intro { padding: 37px 0 23px; }
+    .eyebrow { color: var(--accent); text-transform: uppercase; font-weight: 800; font-size: 11px; letter-spacing: .14em; }
+    h1 { margin: 6px 0 8px; font-size: clamp(29px, 3.4vw, 42px); line-height: 1.15; font-weight: 800; letter-spacing: -.045em; }
+    .subtitle { color: var(--muted); margin: 0; max-width: 720px; font-size: 15px; }
+    .deck-tabs { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 23px; }
+    .deck-button { padding: 9px 16px; background: var(--panel); border: 1px solid var(--border); color: var(--muted); border-radius: 999px; font-weight: 700; font-size: 13px; transition: background .15s, color .15s, border-color .15s; }
+    .deck-button:hover { border-color: var(--accent); }
+    .deck-button.active { color: var(--accent-contrast); background: var(--accent); border-color: var(--accent); }
+    .deck-button small { font-weight: 600; opacity: .8; margin-left: 4px; }
+    .stat-strip { margin: 4px 0 24px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 13px; }
+    .stat { background: var(--panel); padding: 15px 20px; border: 1px solid var(--border); border-radius: 13px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .stat-label { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .stat-value { font-size: 23px; font-weight: 800; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+    .stat-trailing { color: var(--muted); font-size: 12px; }
+    .layout { display: grid; grid-template-columns: minmax(0,1fr) 345px; gap: 21px; align-items: start; padding-bottom: 50px; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--round); box-shadow: var(--shadow); }
+    .quiz-card { padding: 30px 30px 22px; }
+    .question-topline { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+    .qid { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .type-badge { color: var(--muted); background: var(--panel-soft); border: 1px solid var(--border); border-radius: 8px; padding: 4px 9px; font-size: 11px; font-weight: 800; letter-spacing: .02em; }
+    .topic-label { display: block; margin-top: 22px; color: var(--accent); font-size: 12px; font-weight: 800; }
+    .question-title { margin: 10px 0 23px; font-size: clamp(20px, 2.1vw, 27px); line-height: 1.35; letter-spacing: -.023em; font-weight: 760; }
+    .instruction { display: block; margin: -10px 0 14px; font-size: 13px; color: var(--muted); }
+    .track { width: 100%; height: 6px; background: var(--panel-soft); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+    .track-fill { height: 100%; width: 0; background: #4882cc; border-radius: inherit; transition: width .17s; }
+    .question-track { margin-top: 15px; }
+    .options { display: grid; gap: 11px; margin-bottom: 18px; }
+    .option { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1.4px solid var(--border); background: var(--panel); border-radius: 12px; cursor: pointer; min-height: 65px; transition: border-color .12s, background .12s; }
+    .option:hover:not(.locked) { background: var(--panel-soft); border-color: var(--accent); }
+    .option.selected:not(.locked) { border-color: var(--accent); background: var(--accent-soft); }
+    .option.locked { cursor: default; }
+    .option.locked.correct { border-color: var(--correct-border); background: var(--correct-bg); }
+    .option.locked.wrong { border-color: var(--wrong-border); background: var(--wrong-bg); }
+    .option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .option:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .letter { flex: 0 0 auto; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--border); background: var(--panel-soft); color: var(--muted); border-radius: 9px; font-size: 13px; font-weight: 800; }
+    .option.selected:not(.locked) .letter { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+    .option.locked.correct .letter { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct); }
+    .option.locked.wrong .letter { background: var(--wrong-bg); border-color: var(--wrong-border); color: var(--wrong); }
+    .option-label { flex: 1; font-size: 15px; line-height: 1.4; }
+    .answer-mark { margin-left: auto; font-size: 18px; font-weight: 800; }
+    .option.locked.correct .answer-mark { color: var(--correct); }
+    .option.locked.wrong .answer-mark { color: var(--wrong); }
+    .button { border-radius: 10px; padding: 11px 16px; font-weight: 750; font-size: 13px; border: 1px solid var(--border); background: var(--panel); color: var(--text); transition: filter .15s, transform .08s; white-space: nowrap; }
+    .button:not(:disabled):hover { filter: brightness(.96); }
+    html[data-theme="dark"] .button:not(:disabled):hover { filter: brightness(1.18); }
+    .button:not(:disabled):active { transform: scale(.99); }
+    .button.primary { border-color: var(--accent); background: var(--accent); color: var(--accent-contrast); }
+    .button.linkish { color: var(--accent); border-color: transparent; background: transparent; }
+    .button.danger { color: var(--wrong); }
+    .button.small { font-size: 12px; padding: 8px 10px; }
+    .full { display: block; width: 100%; }
+    .feedback { border: 1px solid var(--correct-border); border-radius: 12px; background: var(--correct-bg); padding: 15px 17px; margin: 7px 0 20px; }
+    .feedback.bad { background: var(--wrong-bg); border-color: var(--wrong-border); }
+    .feedback strong { display: block; font-size: 15px; color: var(--correct); margin-bottom: 5px; }
+    .feedback.bad strong { color: var(--wrong); }
+    .feedback p { margin: 0; font-size: 13px; line-height: 1.6; }
+    .quiz-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .quiz-nav .button { min-width: 97px; }
+    .quiz-nav-middle { display: flex; gap: 9px; }
+    .quiz-bottom { margin-top: 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .tiny-status { color: var(--muted); font-size: 12px; }
+    .side-card { padding: 22px; }
+    .side-title { margin: 0 0 3px; font-size: 17px; font-weight: 800; letter-spacing: -.02em; }
+    .side-description { margin: 0 0 18px; color: var(--muted); font-size: 12px; }
+    .section-stat { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 14px 0 8px; }
+    .section-stat b { font-size: 21px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .section-stat span { color: var(--muted); font-size: 12px; }
+    .sections-heading { font-size: 12px; font-weight: 800; margin: 23px 0 10px; }
+    .topic-list { display: grid; gap: 6px; }
+    .topic-row { background: transparent; color: var(--text); width: 100%; text-align: left; border: 1px solid transparent; padding: 11px; border-radius: 10px; }
+    .topic-row:hover { background: var(--panel-soft); border-color: var(--border); }
+    .topic-row.active { background: var(--accent-soft); border-color: var(--accent); }
+    .topic-row-top { display: flex; justify-content: space-between; gap: 6px; align-items: baseline; }
+    .topic-name { font-size: 12px; line-height: 1.3; font-weight: 650; }
+    .topic-count { flex: 0 0 auto; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+    .topic-progress { display: block; height: 4px; margin-top: 8px; width: 100%; background: var(--border); border-radius: 6px; overflow: hidden; }
+    .topic-progress-fill { display: block; height: 100%; background: var(--accent); border-radius: inherit; }
+    .tools-heading { margin: 22px 0 8px; font-size: 12px; font-weight: 800; }
+    .jump-row { display: flex; gap: 8px; }
+    .jump-row input { min-width: 0; flex: 1; width: 60px; border-radius: 9px; border: 1px solid var(--border); background: var(--panel-soft); padding: 8px 11px; color: var(--text); font-size: 13px; }
+    .helper { margin: 10px 0 0; color: var(--muted); font-size: 11px; }
+    .sidebar-footer { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .credits { padding: 0 0 34px; color: var(--muted); text-align: center; font-size: 11px; }
+    .mobile-keyboard { display: none; }
+    @media (max-width: 970px) { .layout { grid-template-columns: minmax(0,1fr) 305px; gap: 13px; } .container { padding: 0 20px; } .quiz-card { padding: 25px 22px; } .side-card { padding: 18px; } }
+    @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } .stat-strip { grid-template-columns: repeat(3,1fr); gap: 8px; } .stat { padding: 12px; align-items: start; flex-direction: column; gap: 2px; } .stat-value { font-size: 20px; } .stat-trailing { display: none; } .intro { padding-top: 24px; } .topbar-inner { min-height: 66px; } .save-indicator { font-size: 0; gap: 0; } .save-indicator .save-dot { display: block; } .side-card { margin-top: 0; } }
+    @media (max-width: 490px) { .container { padding: 0 14px; } .quiz-card { padding: 21px 16px 19px; } .stat-strip { margin-bottom: 15px; } .stat-label { font-size: 11px; } .stat-value { font-size: 18px; } .option { min-height: 60px; padding: 11px 10px; gap: 10px; } .option-label { font-size: 14px; } .letter { width: 30px; height: 30px; } .quiz-nav { gap: 5px; } .quiz-nav .button { min-width: 0; padding: 10px 11px; } .quiz-nav-middle { gap: 5px; } .deck-button { font-size: 12px; padding: 8px 12px; } .question-title { font-size: 21px; } }
+    @media (prefers-reduced-motion:reduce) { * { scroll-behavior: auto!important; transition: none!important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand" aria-label="PATH Practice Lab home">
+        <div class="brand-icon" aria-hidden="true">✚</div>
+        <div><div class="brand-title">PATH Practice Lab</div><div class="brand-caption">Cancer &amp; Musculoskeletal · 227 questions</div></div>
+      </div>
+      <div class="top-actions">
+        <span class="save-indicator" id="saveIndicator"><span class="save-dot"></span><span id="saveMessage">Progress saved on this device</span></span>
+        <button class="icon-button" id="themeToggle" type="button" title="Switch colour theme" aria-label="Switch colour theme">☾</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="intro" aria-label="Quiz introduction">
+      <div class="eyebrow">Self-testing · Offline friendly</div>
+      <h1>Study smarter, one question at a time.</h1>
+      <p class="subtitle">The original 227-question study test, with instant answer checks, section-by-section scores, and progress that stays saved in this browser.</p>
+      <div class="deck-tabs" role="group" aria-label="Select lecture" id="deckTabs"></div>
+    </section>
+
+    <section class="stat-strip" aria-label="Quiz statistics">
+      <div class="stat"><div><div class="stat-label">Questions checked</div><div class="stat-value" id="statChecked">0 / 227</div></div><span class="stat-trailing">in this selection</span></div>
+      <div class="stat"><div><div class="stat-label">Correct answers</div><div class="stat-value" id="statCorrect">0</div></div><span class="stat-trailing">fully correct</span></div>
+      <div class="stat"><div><div class="stat-label">Accuracy</div><div class="stat-value" id="statAccuracy">—</div></div><span class="stat-trailing">checked questions</span></div>
+    </section>
+
+    <main class="layout">
+      <section class="card quiz-card" id="quiz" aria-label="Practice question">
+        <div class="question-topline"><span class="qid" id="questionCount">Question 1 of 227</span><span class="type-badge" id="questionType">ONE ANSWER</span></div>
+        <div class="track question-track" role="progressbar" aria-label="Position in selected lecture" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="questionTrack"><div class="track-fill" id="positionFill"></div></div>
+        <span class="topic-label" id="topicLabel">Cancer I · Basic terminology and statistics</span>
+        <h2 class="question-title" id="questionText">Loading questions…</h2>
+        <span class="instruction" id="questionInstruction"></span>
+        <div class="options" id="options" role="group" aria-label="Answer choices"></div>
+        <div id="answerFeedback" aria-live="polite"></div>
+        <button class="button primary full" type="button" id="checkAnswer">Check answer</button>
+        <div class="quiz-nav">
+          <button class="button" id="previous" type="button">← Previous</button>
+          <div class="quiz-nav-middle"><button class="button" id="random" type="button" title="Jump to a random question in this lecture">↝ Random</button><button class="button primary" id="next" type="button">Next →</button></div>
+        </div>
+        <div class="quiz-bottom"><span class="tiny-status" id="checkedStatus">0 of 227 checked</span><button class="button linkish small" id="nextUnchecked" type="button">Next unchecked →</button></div>
+      </section>
+
+      <aside class="card side-card" aria-label="Progress and topic navigation">
+        <h2 class="side-title">Your study progress</h2>
+        <p class="side-description">See what you've covered and jump to any section.</p>
+        <div class="section-stat"><b id="sideProgress">0 / 227</b><span id="sidePercent">0% checked</span></div>
+        <div class="track" role="progressbar" aria-label="Percent of selected lecture checked" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="sideProgressTrack"><div class="track-fill" id="sideProgressFill"></div></div>
+        <div class="sections-heading">TOPIC BREAKDOWN</div>
+        <div id="topicList" class="topic-list"></div>
+        <div class="tools-heading">GO TO QUESTION</div>
+        <form class="jump-row" id="jumpForm"><input id="jumpNumber" type="number" min="1" max="227" placeholder="Enter 1–227" aria-label="Question number" inputmode="numeric" required><button class="button small" type="submit">Go</button></form>
+        <p class="helper" id="jumpHint">Choose any question in the selected lecture.</p>
+        <div class="sidebar-footer">
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"><button class="button small" id="exportButton" type="button">Download progress</button><button class="button small" id="importButton" type="button">Restore progress</button></div>
+          <input type="file" id="importFile" accept=".json,application/json" style="display:none" aria-label="Select saved progress JSON file">
+          <button class="button danger small" id="resetButton" type="button">Reset all answers and scores</button>
+          <p class="helper">Progress saves in this browser when local storage is allowed. Use Download/Restore progress to move it between browsers or devices.</p>
+          <p class="helper">Tip: Press keys 1–4 to select options, ← / → to navigate, and Enter to check or go to the next question.</p>
+        </div>
+      </aside>
+    </main>
+    <footer class="credits">PATH Practice Lab · Original questions from your 227-question practice bank · Works without internet</footer>
+  </div>
+
+  <script>
+    "use strict";
+    const QUESTIONS = [{"id":1,"topic":"Cancer I — Basic terminology and statistics","question":"What does the word \"tumour\" literally mean?","options":["Bleeding","Swelling","Infection","Metastasis"],"answer":"B","multi":false},{"id":2,"topic":"Cancer I — Basic terminology and statistics","question":"What is neoplasia?","options":["Temporary muscle swelling","Normal tissue repair","New, abnormally regulated cell growth","A contagious infection"],"answer":"C","multi":false},{"id":3,"topic":"Cancer I — Basic terminology and statistics","question":"Which statement best defines cancer?","options":["A normal increase in cell size","Any benign mass","Any growth of tissue","A malignant neoplasm with uncontrolled cell division"],"answer":"D","multi":false},{"id":4,"topic":"Cancer I — Basic terminology and statistics","question":"What is dysplasia?","options":["Growth of new blood vessels","A clot inside a vessel","Abnormal cellular growth and appearance","Death of tissue from low oxygen"],"answer":"C","multi":false},{"id":5,"topic":"Cancer I — Basic terminology and statistics","question":"What does \"carcinoma in situ\" mean?","options":["A tumour is surrounded by scar tissue","Cancer has reached a distant organ","Abnormal epithelial cells have not crossed the basement membrane","A cancer has entered the bloodstream"],"answer":"C","multi":false},{"id":6,"topic":"Cancer I — Basic terminology and statistics","question":"How does incidence differ from mortality?","options":["Both describe tumour grade","Both count all existing cases","Incidence counts new cases; mortality counts deaths","Incidence counts deaths; mortality counts new cases"],"answer":"C","multi":false},{"id":7,"topic":"Cancer I — Basic terminology and statistics","question":"Why does cancer incidence generally rise with age?","options":["Mutations can accumulate over time","Bones stop dividing at puberty","All cancers are infectious","Hormones stop functioning entirely"],"answer":"A","multi":false},{"id":8,"topic":"Cancer I — Basic terminology and statistics","question":"Which statements about tumours are correct? (Select all that apply.)","options":["All tumours are malignant","A neoplasm is abnormal new growth","A tumour can be benign","Neoplasms are always metastatic"],"answer":"BC","multi":true},{"id":9,"topic":"Cancer I — Basic terminology and statistics","question":"Which term means the number of new cancer diagnoses in a specified period?","options":["Histologic grade","Mortality","Incidence","Prevalence"],"answer":"C","multi":false},{"id":10,"topic":"Cancer I — Basic terminology and statistics","question":"Which term refers to cancer-related deaths within a specified population and period?","options":["Remission","Mortality","Dysplasia","Incidence"],"answer":"B","multi":false},{"id":11,"topic":"Cancer I — Benign vs. malignant","question":"What is a typical feature of a benign neoplasm?","options":["A well-defined, often encapsulated border","Marked anaplasia","Destruction of the basement membrane","Invasion into distant tissues"],"answer":"A","multi":false},{"id":12,"topic":"Cancer I — Benign vs. malignant","question":"What feature most strongly distinguishes malignancy from benign growth?","options":["Presence of a visible lump","Ability to invade surrounding tissue","A slow growth rate","Tissue swelling"],"answer":"B","multi":false},{"id":13,"topic":"Cancer I — Benign vs. malignant","question":"What is anaplasia?","options":["Abnormal fluid collection","Programmed cell death","Formation of normal bone","Loss of normal cellular differentiation"],"answer":"D","multi":false},{"id":14,"topic":"Cancer I — Benign vs. malignant","question":"What does pleomorphism describe?","options":["A uniform cell population","Variation in cell size and shape","New capillary formation","An intact capsule"],"answer":"B","multi":false},{"id":15,"topic":"Cancer I — Benign vs. malignant","question":"What does \"well differentiated\" mean?","options":["Cells have metastasized","Cells resemble their normal tissue of origin","Cells have completely lost identity","Cells cannot divide"],"answer":"B","multi":false},{"id":16,"topic":"Cancer I — Benign vs. malignant","question":"Why might a benign brain tumour still be dangerous?","options":["It secretes collagenase into blood","It necessarily becomes leukemia","All benign tumours metastasize","It can compress vital structures"],"answer":"D","multi":false},{"id":17,"topic":"Cancer I — Benign vs. malignant","question":"Which finding is more typical of a rapidly growing malignant tumour?","options":["A uniform encapsulated border","Necrotic areas caused by inadequate blood supply","No mitoses","Complete lack of new vessels"],"answer":"B","multi":false},{"id":18,"topic":"Cancer I — Benign vs. malignant","question":"Which features generally suggest malignancy? (Select all that apply.)","options":["Poorly defined invasive margins","Potential for metastasis","Strong capsule with no invasion","Anaplastic cells"],"answer":"ABD","multi":true},{"id":19,"topic":"Cancer I — Naming neoplasms","question":"What tissue is indicated by the prefix \"adeno-\"?","options":["Glandular tissue","Fat","Skeletal muscle","Bone"],"answer":"A","multi":false},{"id":20,"topic":"Cancer I — Naming neoplasms","question":"A benign tumour of fatty tissue is a:","options":["Adenocarcinoma","Osteoma","Lipoma","Liposarcoma"],"answer":"C","multi":false},{"id":21,"topic":"Cancer I — Naming neoplasms","question":"A malignant tumour of bone is a:","options":["Osteoma","Fibroma","Osteosarcoma","Chondroma"],"answer":"C","multi":false},{"id":22,"topic":"Cancer I — Naming neoplasms","question":"Which term means a benign tumour of smooth muscle?","options":["Leiomyoma","Rhabdomyosarcoma","Osteosarcoma","Leiomyosarcoma"],"answer":"A","multi":false},{"id":23,"topic":"Cancer I — Naming neoplasms","question":"A malignant tumour arising from glandular epithelium is an:","options":["Fibrosarcoma","Lipoma","Adenoma","Adenocarcinoma"],"answer":"D","multi":false},{"id":24,"topic":"Cancer I — Naming neoplasms","question":"What does the suffix \"-carcinoma\" usually identify?","options":["Bone infection","Malignancy arising in epithelium","Bleeding in soft tissue","Benign connective-tissue growth"],"answer":"B","multi":false},{"id":25,"topic":"Cancer I — Naming neoplasms","question":"What does the suffix \"-sarcoma\" usually identify?","options":["Malignant mesenchymal or connective-tissue tumour","Chronic joint infection","Malignant epithelial tumour","Benign glandular tumour"],"answer":"A","multi":false},{"id":26,"topic":"Cancer I — Naming neoplasms","question":"Which tumour is a malignant exception to the usual \"-oma\" rule?","options":["Melanoma","Lipoma","Adenoma","Fibroma"],"answer":"A","multi":false},{"id":27,"topic":"Cancer I — Naming neoplasms","question":"What is a rhabdomyosarcoma?","options":["Benign bone tumour","Malignant tumour of skeletal muscle","Benign tumour of smooth muscle","Malignant tumour of glandular epithelium"],"answer":"B","multi":false},{"id":28,"topic":"Cancer I — Naming neoplasms","question":"Which statements about neoplasm naming are correct? (Select all that apply.)","options":["\"Glio-\" refers to glial tissue","\"Chondro-\" refers to cartilage","Lymphoma is malignant despite ending in \"-oma\"","\"Lipo-\" refers to a tendon"],"answer":"ABC","multi":true},{"id":29,"topic":"Cancer I — Naming neoplasms","question":"What does the prefix \"chondro-\" refer to?","options":["Bone","Fibrous tissue","Cartilage","Fat"],"answer":"C","multi":false},{"id":30,"topic":"Cancer I — Naming neoplasms","question":"What does the prefix \"fibro-\" refer to?","options":["Smooth muscle","Glandular epithelium","Fibrous connective tissue","Liver cells"],"answer":"C","multi":false},{"id":31,"topic":"Cancer I — Characteristics of cancer cells","question":"Which enzyme helps cancer cells maintain telomeres and keep dividing?","options":["Collagenase","Alkaline phosphatase","Telomerase","Amylase"],"answer":"C","multi":false},{"id":32,"topic":"Cancer I — Characteristics of cancer cells","question":"Which growth factor helps a tumour recruit new blood vessels?","options":["ADH","VEGF","Erythropoietin","ACTH"],"answer":"B","multi":false},{"id":33,"topic":"Cancer I — Characteristics of cancer cells","question":"What is angiogenesis?","options":["Programmed cell death","Loss of nuclear material","Re-joining fractured bones","Formation of new blood vessels"],"answer":"D","multi":false},{"id":34,"topic":"Cancer I — Characteristics of cancer cells","question":"What happens when cancer cells lose cadherins?","options":["They undergo normal apoptosis","They stop cell division","They become better attached to neighbouring cells","They become less attached to neighbouring cells"],"answer":"D","multi":false},{"id":35,"topic":"Cancer I — Characteristics of cancer cells","question":"What does loss of density-dependent inhibition allow?","options":["Cells stop growing when in contact","Cells keep dividing despite crowding","Cells rapidly mineralize","Cells need attachment to divide"],"answer":"B","multi":false},{"id":36,"topic":"Cancer I — Characteristics of cancer cells","question":"What is anchorage independence?","options":["Ability to survive and divide without normal attachment","Prevention of tumour invasion","Need for contact with a basement membrane","Requirement for external growth factors"],"answer":"A","multi":false},{"id":37,"topic":"Cancer I — Characteristics of cancer cells","question":"How does collagenase help malignant cells?","options":["It digests extracellular collagen to assist invasion","It makes red blood cells","It deposits calcium in bone","It repairs DNA damage"],"answer":"A","multi":false},{"id":38,"topic":"Cancer I — Characteristics of cancer cells","question":"What does autocrine motility factor (AMF) promote?","options":["Platelet production","Bone resorption","New blood vessel formation","Movement of cancer cells"],"answer":"D","multi":false},{"id":39,"topic":"Cancer I — Characteristics of cancer cells","question":"What is apoptosis?","options":["Migration through lymphatics","Production of antibodies","Uncontrolled bone formation","Programmed cell death"],"answer":"D","multi":false},{"id":40,"topic":"Cancer I — Characteristics of cancer cells","question":"Which traits are associated with malignant transformation? (Select all that apply.)","options":["Avoidance of apoptosis","Normal contact inhibition","Independence from external growth signals","Genetic instability"],"answer":"ACD","multi":true},{"id":41,"topic":"Cancer I — Invasion and metastasis","question":"What is metastasis?","options":["Spread of cancer to a secondary site","Slow physiological cell growth","A harmless localized swelling","Wound clot formation"],"answer":"A","multi":false},{"id":42,"topic":"Cancer I — Invasion and metastasis","question":"What usually must a malignant epithelial tumour breach to invade deeper tissues?","options":["Joint capsule","Basement membrane","Periosteum","Bone marrow"],"answer":"B","multi":false},{"id":43,"topic":"Cancer I — Invasion and metastasis","question":"What is a sentinel lymph node?","options":["A node containing only red blood cells","First lymph node receiving drainage from a tumour","A node unrelated to tumour location","Largest lymph node in the body"],"answer":"B","multi":false},{"id":44,"topic":"Cancer I — Invasion and metastasis","question":"What is hematogenous spread?","options":["Spread only through a body cavity","Local tissue compression","Growth limited to original epithelium","Cancer dissemination through blood"],"answer":"D","multi":false},{"id":45,"topic":"Cancer I — Invasion and metastasis","question":"What is seeding in a body cavity?","options":["Cells forming a protective capsule","Cancer cells undergoing apoptosis","White blood cells killing microbes","Tumour cells spreading across a cavity surface"],"answer":"D","multi":false},{"id":46,"topic":"Cancer I — Invasion and metastasis","question":"Why can the liver be an early metastatic site for colon cancer?","options":["All tumours arise in liver tissue","Lymph flows exclusively to the liver","Portal venous blood from the gut drains to the liver","The liver contains no immune cells"],"answer":"C","multi":false},{"id":47,"topic":"Cancer I — Invasion and metastasis","question":"What is organ tropism in metastasis?","options":["Normal tissue differentiation","A reduction in mitotic activity","Preference of tumour cells for favourable organs","Ability of a tumour to remain encapsulated"],"answer":"C","multi":false},{"id":48,"topic":"Cancer I — Invasion and metastasis","question":"Which routes can spread malignant cells beyond the primary site? (Select all that apply.)","options":["Normal contact inhibition","Blood vessels","Lymphatic vessels","Seeding of body cavities"],"answer":"BCD","multi":true},{"id":49,"topic":"Cancer I — Genetic basis of cancer","question":"What is a proto-oncogene?","options":["A normal gene that promotes regulated cell growth","A gene found only in viruses","A permanently inactivated repair gene","An abnormal tumour mass"],"answer":"A","multi":false},{"id":50,"topic":"Cancer I — Genetic basis of cancer","question":"What is an oncogene?","options":["An abnormally activated growth-promoting gene","A normal cell-death product","A joint inflammation marker","A normal growth-suppressing gene"],"answer":"A","multi":false},{"id":51,"topic":"Cancer I — Genetic basis of cancer","question":"How many altered copies are often sufficient to activate a proto-oncogene into an oncogene?","options":["Both copies always","Three copies","One copy","None"],"answer":"C","multi":false},{"id":52,"topic":"Cancer I — Genetic basis of cancer","question":"How many copies of a typical tumour-suppressor gene generally must lose function for complete loss of its effect?","options":["Both copies","One copy always","No copies","Three copies"],"answer":"A","multi":false},{"id":53,"topic":"Cancer I — Genetic basis of cancer","question":"Which gene is a classic proto-oncogene involved in growth signalling?","options":["BRCA1","APC","RAS","TP53"],"answer":"C","multi":false},{"id":54,"topic":"Cancer I — Genetic basis of cancer","question":"Which protein can arrest the cell cycle, promote DNA repair, or trigger apoptosis?","options":["p53","VEGF","Collagenase","Cadherin"],"answer":"A","multi":false},{"id":55,"topic":"Cancer I — Genetic basis of cancer","question":"What is tumour heterogeneity?","options":["Every tumour cell has identical genetics forever","A tumour always develops from many independent organs","All tumour cells stop dividing","Different cells within one tumour have different mutations"],"answer":"D","multi":false},{"id":56,"topic":"Cancer I — Genetic basis of cancer","question":"Which statements about cancer genetics are correct? (Select all that apply.)","options":["Somatic mutations are generally not passed to offspring","BRCA1 is involved in inherited cancer susceptibility","An oncogene always needs both gene copies altered","Germline mutations can be inherited"],"answer":"ABD","multi":true},{"id":57,"topic":"Cancer I — Genetic basis of cancer","question":"An inherited BRCA1 mutation is especially associated with increased risk of:","options":["Osteomyelitis","Gout and rheumatoid arthritis","Breast and ovarian cancers","Simple fractures"],"answer":"C","multi":false},{"id":58,"topic":"Cancer II — Heredity and environmental causes","question":"An inherited APC tumour-suppressor mutation is associated with:","options":["Familial adenomatous polyposis (FAP)","Gout","Rheumatoid arthritis","Osteomalacia"],"answer":"A","multi":false},{"id":59,"topic":"Cancer II — Heredity and environmental causes","question":"What is a polyp?","options":["A blood clot in the pulmonary artery","A collection of pus in bone","A piece of dead bone","A tissue growth projecting from a mucosal surface"],"answer":"D","multi":false},{"id":60,"topic":"Cancer II — Heredity and environmental causes","question":"What is a carcinogen?","options":["A tumour-specific antibody","A factor capable of increasing cancer risk","A medication that only treats infections","A substance that stops all DNA mutation"],"answer":"B","multi":false},{"id":61,"topic":"Cancer II — Heredity and environmental causes","question":"What distinguishes an indirect-reactive carcinogen (procarcinogen)?","options":["It is always harmless","It requires metabolic activation","It causes cancer immediately in every exposure","It acts without chemical change"],"answer":"B","multi":false},{"id":62,"topic":"Cancer II — Heredity and environmental causes","question":"What is a typical relationship between carcinogen exposure and risk?","options":["Cancer develops only during exposure","Risk always falls with exposure","Risk is independent of dose in all cases","Risk often increases with dose or duration"],"answer":"D","multi":false},{"id":63,"topic":"Cancer II — Heredity and environmental causes","question":"What did cancer patterns in migrants illustrate in the lecture?","options":["All risk is inherited","Age never affects cancer risk","Environment can strongly influence cancer risk","Geography cannot affect incidence"],"answer":"C","multi":false},{"id":64,"topic":"Cancer II — Heredity and environmental causes","question":"Which exposures can damage DNA and raise cancer risk? (Select all that apply.)","options":["Protective tumour-suppressor activity","Intense UV exposure","Tobacco smoke","Certain chemical carcinogens"],"answer":"BCD","multi":true},{"id":65,"topic":"Cancer II — Heredity and environmental causes","question":"What does a prophylactic colectomy aim to prevent in a high-risk FAP patient?","options":["Osteoporosis","Colorectal cancer","Cervical infection","Kidney stones"],"answer":"B","multi":false},{"id":66,"topic":"Cancer II — Infectious causes","question":"Which virus is strongly associated with primary liver cancer?","options":["Human papillomavirus","Rhinovirus","Hepatitis B virus","Influenza A virus"],"answer":"C","multi":false},{"id":67,"topic":"Cancer II — Infectious causes","question":"Human papillomavirus (HPV) is strongly linked to which cancer?","options":["Osteosarcoma","Most thyroid cancers","Cervical cancer","Leukemia exclusively"],"answer":"C","multi":false},{"id":68,"topic":"Cancer II — Infectious causes","question":"Which bacterium increases the risk of stomach cancer?","options":["Streptococcus pyogenes","Staphylococcus epidermidis","Escherichia coli in all infections","Helicobacter pylori"],"answer":"D","multi":false},{"id":69,"topic":"Cancer II — Infectious causes","question":"What does integration of viral DNA into host DNA potentially do?","options":["Prevent all future cell division","Make every tumour benign","Disrupt host genes and their regulation","Immediately cure infected tissue"],"answer":"C","multi":false},{"id":70,"topic":"Cancer II — Infectious causes","question":"Why can long-standing infection increase cancer risk?","options":["Infection stops all tissue repair","White blood cells become bone cells","Viruses always kill every host cell instantly","Ongoing damage and regeneration increase opportunities for mutation"],"answer":"D","multi":false},{"id":71,"topic":"Cancer II — Infectious causes","question":"What is one way H. pylori promotes gastric injury?","options":["It makes telomeres shorter in all tissues","It directly produces bone callus","It disrupts protective gastric mucosal defences","It increases bone mineralization"],"answer":"C","multi":false},{"id":72,"topic":"Cancer II — Infectious causes","question":"Which cancer is linked to chronic HBV infection in the lecture?","options":["Hepatocellular carcinoma","Osteochondroma","Melanoma exclusively","Lipoma"],"answer":"A","multi":false},{"id":73,"topic":"Cancer II — Infectious causes","question":"Which infection-related mechanisms can contribute to carcinogenesis? (Select all that apply.)","options":["Chronic tissue injury and regeneration","Guaranteed absence of inflammation","Disruption of host genes by viral integration","Increased expression of growth-promoting viral genes"],"answer":"ACD","multi":true},{"id":74,"topic":"Cancer II — Clinical manifestations","question":"What is often true of cancer in its earliest stages?","options":["It always causes anemia","It invariably causes fever","It always causes severe pain","It may produce no symptoms"],"answer":"D","multi":false},{"id":75,"topic":"Cancer II — Clinical manifestations","question":"Which symptom is emphasized as the most common in the study guide?","options":["Bone fracture","Hemoptysis","Fatigue","Pruritus"],"answer":"C","multi":false},{"id":76,"topic":"Cancer II — Clinical manifestations","question":"How does cancer-related fatigue often differ from ordinary tiredness?","options":["It occurs only with exercise","It may not be relieved by sleep","It means low platelets only","It is always resolved by a nap"],"answer":"B","multi":false},{"id":77,"topic":"Cancer II — Clinical manifestations","question":"What is cancer cachexia?","options":["Fluid trapped around the lung","An excess of circulating RBCs","Severe wasting of muscle and fat with metabolic changes","Simple dehydration only"],"answer":"C","multi":false},{"id":78,"topic":"Cancer II — Clinical manifestations","question":"What does \"anorexia\" mean in the context of cachexia?","options":["Excessive appetite","Loss of appetite","Increased urine output","Bleeding from the nose"],"answer":"B","multi":false},{"id":79,"topic":"Cancer II — Clinical manifestations","question":"What is anemia?","options":["Reduced red blood cells or hemoglobin","Excess calcium","Reduced platelets","Increased white blood cells"],"answer":"A","multi":false},{"id":80,"topic":"Cancer II — Clinical manifestations","question":"What is leukopenia?","options":["Low platelet count","High red cell count","Low white blood cell count","High serum uric acid"],"answer":"C","multi":false},{"id":81,"topic":"Cancer II — Clinical manifestations","question":"What is thrombocytopenia?","options":["Low white blood cell count","Low platelet count","High hemoglobin","Low growth hormone"],"answer":"B","multi":false},{"id":82,"topic":"Cancer II — Clinical manifestations","question":"What is a paraneoplastic syndrome?","options":["A benign tumour capsule","The surgical margin around a tumour","A fracture due to osteoporosis","A distant effect of tumour-produced substances, not direct local invasion"],"answer":"D","multi":false},{"id":83,"topic":"Cancer II — Clinical manifestations","question":"Which tumour-produced substances may cause paraneoplastic effects? (Select all that apply.)","options":["PTH-related activity causing hypercalcemia","ADH causing SIADH","Telomerase causing a sprained ligament","ACTH causing Cushing syndrome"],"answer":"ABD","multi":true},{"id":84,"topic":"Cancer II — Clinical manifestations","question":"What is a pleural effusion?","options":["Blood in the urinary bladder","Excess air in an alveolus","A collection of pus inside bone","Excess fluid in the space around the lungs"],"answer":"D","multi":false},{"id":85,"topic":"Cancer II — Clinical manifestations","question":"Which therapy may stimulate red blood cell production in cancer-related anemia?","options":["Trastuzumab","Calcitonin","Bisphosphonate","Erythropoietin"],"answer":"D","multi":false},{"id":86,"topic":"Cancer II — Clinical manifestations","question":"What does \"nosocomial infection\" mean?","options":["An infection inherited in the germline","Infection acquired in a health care setting","A viral mutation in a tumour","Infection limited to bone tissue"],"answer":"B","multi":false},{"id":87,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"What is the main goal of cancer screening?","options":["Measure only tumour grade","Replace all clinical examinations","Detect disease before symptoms arise","Confirm malignancy in every patient without biopsy"],"answer":"C","multi":false},{"id":88,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"Screening an asymptomatic population is an example of:","options":["Secondary prevention","Palliative surgery","Primary treatment","Rehabilitation"],"answer":"A","multi":false},{"id":89,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"What provides definitive tissue-based confirmation of a suspected cancer?","options":["A patient's pain score alone","Body temperature","A single elevated tumour marker","Biopsy followed by microscopic examination"],"answer":"D","multi":false},{"id":90,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"What is cytology?","options":["Administration of radiation","Surgical removal of a limb","Examination of individual cells","Measurement of bone strength"],"answer":"C","multi":false},{"id":91,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"What does immunohistochemistry use to identify cell features?","options":["X-rays only","Blood pressure measurement","Electrical stimulation","Antibodies against specific tissue markers"],"answer":"D","multi":false},{"id":92,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"What does the T in TNM indicate?","options":["Number of systemic symptoms","Size or local extent of the primary tumour","Presence of fever","Degree of anaemia"],"answer":"B","multi":false},{"id":93,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"What does the N in TNM indicate?","options":["Number of chemotherapy cycles","Nuclear size in histology","Nutritional status","Regional lymph-node involvement"],"answer":"D","multi":false},{"id":94,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"What does the M in TNM indicate?","options":["Muscle weakness","Distant metastasis","Local swelling only","Mitotic grade alone"],"answer":"B","multi":false},{"id":95,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"How does histological grade differ from stage?","options":["Grade describes spread; stage describes cell shape","Both are based only on tumour markers","Both are unrelated to prognosis","Grade describes cellular abnormality; stage describes extent of spread"],"answer":"D","multi":false},{"id":96,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"Which statements about staging and diagnosis are correct? (Select all that apply.)","options":["A Pap test examines exfoliated cells","Stage IV generally indicates distant spread","High-grade tumours tend to be poorly differentiated","Tumour markers are perfectly specific"],"answer":"ABC","multi":true},{"id":97,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"Why can an elevated tumour marker not confirm cancer by itself?","options":["They are detectable only after surgery","They measure only bone density","Tumour markers are always absent in cancers","Noncancerous conditions can also raise marker levels"],"answer":"D","multi":false},{"id":98,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"Which breast tumour biomarker can identify patients who may benefit from trastuzumab?","options":["Osteoclast activity","HER2 overexpression","Low alkaline phosphatase","Urate deposition"],"answer":"B","multi":false},{"id":99,"topic":"Cancer II — Screening, diagnosis, staging, grading","question":"Which stage generally refers to a cancer that has spread to a distant organ?","options":["Stage IV","Stage 0","Grade 1","Stage I"],"answer":"A","multi":false},{"id":100,"topic":"Cancer II — Surgery and radiation","question":"What is meant by a surgical margin?","options":["A blood test for cancer","A lymphocyte receptor","The tumour's mitotic rate","A rim of surrounding tissue removed with the tumour"],"answer":"D","multi":false},{"id":101,"topic":"Cancer II — Surgery and radiation","question":"What is de-bulking surgery?","options":["Taking only a diagnostic blood sample","Creating new blood vessels","Always curing all metastatic disease","Removing as much tumour as possible to assist further treatment"],"answer":"D","multi":false},{"id":102,"topic":"Cancer II — Surgery and radiation","question":"What is palliative surgery primarily intended to do?","options":["Relieve symptoms such as pain or obstruction","Guarantee a cure","Determine cell chromosomes","Prevent every inherited mutation"],"answer":"A","multi":false},{"id":103,"topic":"Cancer II — Surgery and radiation","question":"What is the main way ionizing radiation kills dividing cancer cells?","options":["DNA damage, including double-strand breaks","Formation of osteoid","Increased vitamin D absorption","Improved telomere repair"],"answer":"A","multi":false},{"id":104,"topic":"Cancer II — Surgery and radiation","question":"Which device commonly produces targeted high-energy X-rays for radiotherapy?","options":["Linear accelerator","Centrifuge","Pulse oximeter","Spirometer"],"answer":"A","multi":false},{"id":105,"topic":"Cancer II — Surgery and radiation","question":"Which tumour condition generally increases radiation sensitivity?","options":["Complete DNA-repair capacity","Absence of blood supply","No cell division","Better oxygenation"],"answer":"D","multi":false},{"id":106,"topic":"Cancer II — Surgery and radiation","question":"What is fractionation in radiotherapy?","options":["Giving all radiation at once without breaks","Dividing a total dose into multiple smaller treatments","Treating only with chemotherapy","Removing the tumour surgically"],"answer":"B","multi":false},{"id":107,"topic":"Cancer II — Surgery and radiation","question":"Which are potential uses or consequences of radiotherapy? (Select all that apply.)","options":["Palliation of painful bone metastases","Guaranteed absence of side effects","Treatment combined with surgery","Damage to rapidly dividing normal cells"],"answer":"ACD","multi":true},{"id":108,"topic":"Cancer II — Surgery and radiation","question":"What is the purpose of emergency cancer surgery for a perforated bowel?","options":["Manage a life-threatening complication","Estimate only the tumour cell grade","Stimulate T-lymphocytes","Detect only HER2"],"answer":"A","multi":false},{"id":109,"topic":"Cancer II — Systemic therapies","question":"What makes chemotherapy a systemic treatment?","options":["It cannot reach the bloodstream","Drugs act throughout the body","It involves only surgical removal","It treats only one small skin patch"],"answer":"B","multi":false},{"id":110,"topic":"Cancer II — Systemic therapies","question":"Why are chemotherapy drugs often combined?","options":["Stop drugs from entering blood","Reduce resistance and target varied cancer cells","Eliminate all normal-tissue toxicity","Make every tumour benign"],"answer":"B","multi":false},{"id":111,"topic":"Cancer II — Systemic therapies","question":"What does \"exponential cell kill\" mean?","options":["Tumour cells never regrow","Each course kills a fraction of tumour cells","All treatments work after one dose","Each dose kills exactly ten cells"],"answer":"B","multi":false},{"id":112,"topic":"Cancer II — Systemic therapies","question":"Why are rapidly dividing healthy tissues susceptible to chemotherapy?","options":["Cytotoxic drugs also disrupt their DNA synthesis and mitosis","They do not contain DNA","Chemotherapy exclusively targets collagen","They are never exposed to medication"],"answer":"A","multi":false},{"id":113,"topic":"Cancer II — Systemic therapies","question":"What is pancytopenia?","options":["Increase in every blood cell type","Decrease in calcium only","Excess urate deposition","Reduction in red cells, white cells and platelets"],"answer":"D","multi":false},{"id":114,"topic":"Cancer II — Systemic therapies","question":"What is active immunotherapy?","options":["Removing a tumour by surgery","Stimulating a patient's own immune response to cancer","A type of immobilization","Transferring only ready-made blood cells from another person"],"answer":"B","multi":false},{"id":115,"topic":"Cancer II — Systemic therapies","question":"What is a characteristic action of interferons in cancer treatment?","options":["Complete suppression of apoptosis","Promotion of angiogenesis","Anti-proliferative activity","Promotion of unlimited tumour mitosis"],"answer":"C","multi":false},{"id":116,"topic":"Cancer II — Systemic therapies","question":"Which side effects may result from cytotoxic chemotherapy? (Select all that apply.)","options":["Alopecia","Universal improvement in fertility","Myelosuppression","Mucositis and nausea"],"answer":"ACD","multi":true},{"id":117,"topic":"Cancer II — Systemic therapies","question":"What is passive immunotherapy?","options":["A technique for casting a bone","Use of X-rays to break DNA","Triggering antibody production by vaccination alone","Providing immune cells or immune products that act against cancer"],"answer":"D","multi":false},{"id":118,"topic":"Cancer II — Systemic therapies","question":"What is the basic goal of hormone therapy in hormone-responsive cancer?","options":["Reduce growth-promoting hormonal signalling","Increase collagen digestion","Increase every tumour's estrogen exposure","Replace the patient's blood platelets"],"answer":"A","multi":false},{"id":119,"topic":"Cancer II — Systemic therapies","question":"What is alopecia?","options":["Hair loss","Abnormally high uric acid","Low white blood cells","Severe loss of appetite"],"answer":"A","multi":false},{"id":120,"topic":"Cancer II — Systemic therapies","question":"What does a low therapeutic index suggest for chemotherapy?","options":["The medicine cannot harm healthy cells","It has no therapeutic effect at any dose","Cancer is always cured with one dose","The effective and harmful doses are relatively close"],"answer":"D","multi":false},{"id":121,"topic":"Musculoskeletal — Bone structure/remodeling","question":"What is the diaphysis of a long bone?","options":["Its shaft","Its articular cartilage","Its growth plate only","Its marrow cells"],"answer":"A","multi":false},{"id":122,"topic":"Musculoskeletal — Bone structure/remodeling","question":"What is the epiphysis?","options":["A synovial membrane","An end region of a long bone","The central shaft","A type of tendon"],"answer":"B","multi":false},{"id":123,"topic":"Musculoskeletal — Bone structure/remodeling","question":"Which structure covers the outer surface of bone except the articular surface?","options":["Endosteum","Synovium","Osteoid","Periosteum"],"answer":"D","multi":false},{"id":124,"topic":"Musculoskeletal — Bone structure/remodeling","question":"What lines the inner surfaces of a bone's medullary cavity?","options":["Periosteum","Meniscus","Endosteum","Joint capsule"],"answer":"C","multi":false},{"id":125,"topic":"Musculoskeletal — Bone structure/remodeling","question":"What is the osteon?","options":["A fracture caused by twisting","A bone cancer cell","A type of joint","Structural unit of compact bone"],"answer":"D","multi":false},{"id":126,"topic":"Musculoskeletal — Bone structure/remodeling","question":"Which cell carries out bone resorption?","options":["Chondrocyte","Osteoblast","Osteocyte","Osteoclast"],"answer":"D","multi":false},{"id":127,"topic":"Musculoskeletal — Bone structure/remodeling","question":"Which cell forms new bone matrix?","options":["Osteoclast","Platelet","Osteoblast","Neutrophil"],"answer":"C","multi":false},{"id":128,"topic":"Musculoskeletal — Bone structure/remodeling","question":"What is osteoid?","options":["The fibrous outer membrane of bone","Unmineralized new bone matrix","Dead bone from infection","A blood clot inside a joint"],"answer":"B","multi":false},{"id":129,"topic":"Musculoskeletal — Bone structure/remodeling","question":"What is a lacuna in bone?","options":["A fracture in a child's bone","Small space containing an osteocyte","The hollow centre of a muscle","A tendon attachment point"],"answer":"B","multi":false},{"id":130,"topic":"Musculoskeletal — Bone structure/remodeling","question":"Which statements about compact bone and its cells are correct? (Select all that apply.)","options":["Canaliculi connect small spaces around bone cells","Central canals occur within osteons","Osteocytes occupy lacunae","Osteoclasts produce osteoid as their main function"],"answer":"ABC","multi":true},{"id":131,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"What is a contusion?","options":["Bruise caused by blunt trauma with intact skin","A bone infection","Skin torn completely open","A tendon rupture only"],"answer":"A","multi":false},{"id":132,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"What is a hematoma?","options":["A torn ligament","An articular cartilage defect","Tumour of bone","Local collection of blood"],"answer":"D","multi":false},{"id":133,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"What is a laceration?","options":["Blood accumulating under intact skin only","A fracture fragment pulled off by tendon","A partial dislocation","A tear or cut in the skin or tissue"],"answer":"D","multi":false},{"id":134,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"What does an articulation refer to?","options":["A blood vessel inside marrow","A joint where bones meet","The centre of a muscle belly","A cell that resorbs bone"],"answer":"B","multi":false},{"id":135,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"What does a ligament connect?","options":["Nerve to artery","Muscle to bone","Muscle to skin","Bone to bone"],"answer":"D","multi":false},{"id":136,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"What does a tendon connect?","options":["Muscle to bone","Cartilage to cartilage only","Nerve to muscle only","Bone to bone"],"answer":"A","multi":false},{"id":137,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"Which structure is injured in a strain?","options":["Ligament only","Muscle or tendon","Synovial fluid only","Articular bone only"],"answer":"B","multi":false},{"id":138,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"Which structure is injured in a sprain?","options":["Bone marrow","Muscle only","Ligament","Periosteum only"],"answer":"C","multi":false},{"id":139,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"A shoulder joint has completely lost contact between its articular surfaces. This is a:","options":["Contusion","Dislocation","Subluxation","Strain"],"answer":"B","multi":false},{"id":140,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"A kneecap partially loses normal contact with the joint. This is a:","options":["Osteomalacia","Bone sequestrum","Subluxation","Complete dislocation"],"answer":"C","multi":false},{"id":141,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"Which sprain grade indicates complete ligament disruption in the guide's scheme?","options":["Grade 3","Grade 2","Grade 0","Grade 1"],"answer":"A","multi":false},{"id":142,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"Which sprain grade involves avulsion at the ligament insertion in the knee example?","options":["Grade 3","Grade 1","Grade 2","Grade 4"],"answer":"D","multi":false},{"id":143,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"Which structure repairs a damaged tendon or ligament by depositing collagen?","options":["Osteoclast","Macrophage only","Fibroblast","Erythrocyte"],"answer":"C","multi":false},{"id":144,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"When does the study guide say collagen begins to be deposited after a sprain?","options":["Within 5 seconds","After 8 years","Only after bone remodeling","About 4-5 days"],"answer":"D","multi":false},{"id":145,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"A patient twists an ankle and develops pain over the whole joint, swelling and a damaged ligament. Most likely:","options":["Strain","Sprain","Osteomyelitis","Fracture of the skull"],"answer":"B","multi":false},{"id":146,"topic":"Musculoskeletal — Soft tissue and joint injuries","question":"Which statements about joint injuries are correct? (Select all that apply.)","options":["Dislocations can damage local nerves","Strains involve muscle or tendon","Sprains may be accompanied by rapid swelling","Subluxation means loss of all contact"],"answer":"ABC","multi":true},{"id":147,"topic":"Musculoskeletal — Fracture classification","question":"What is a fracture?","options":["Inflammation of an intact tendon","Increased density of cancellous bone","A new capsule formed around a joint","Discontinuity in bone when force exceeds its strength"],"answer":"D","multi":false},{"id":148,"topic":"Musculoskeletal — Fracture classification","question":"A bone has one complete crack producing two main fragments. It is a:","options":["Simple or noncomminuted fracture","Torus fracture","Comminuted fracture","Bowing deformity only"],"answer":"A","multi":false},{"id":149,"topic":"Musculoskeletal — Fracture classification","question":"A broken bone has several small intermediate fragments. It is:","options":["Greenstick only","Simple noncomminuted","Impacted only","Comminuted"],"answer":"D","multi":false},{"id":150,"topic":"Musculoskeletal — Fracture classification","question":"A fractured tibia has intact overlying skin. How is it classified?","options":["Closed fracture","Communicating fracture","Compound fracture","Open fracture"],"answer":"A","multi":false},{"id":151,"topic":"Musculoskeletal — Fracture classification","question":"A fractured femur breaks through the skin. How is it classified?","options":["Torus fracture","Closed fracture","Noncommunicating fracture","Open fracture"],"answer":"D","multi":false},{"id":152,"topic":"Musculoskeletal — Fracture classification","question":"Why is an open fracture especially concerning?","options":["It cannot involve a long bone","It always heals faster","Infection and blood loss","It never damages soft tissue"],"answer":"C","multi":false},{"id":153,"topic":"Musculoskeletal — Fracture classification","question":"A fracture line crosses at right angles to the long axis. What type is it?","options":["Spiral","Longitudinal","Oblique","Transverse"],"answer":"D","multi":false},{"id":154,"topic":"Musculoskeletal — Fracture classification","question":"A fracture line travels diagonally across the bone. It is:","options":["Transverse","Torus","Oblique","Linear longitudinal"],"answer":"C","multi":false},{"id":155,"topic":"Musculoskeletal — Fracture classification","question":"A fracture line runs along the long axis of the shaft. It is:","options":["Depressed","Spiral","Transverse","Longitudinal (linear)"],"answer":"D","multi":false},{"id":156,"topic":"Musculoskeletal — Fracture classification","question":"A corkscrew-shaped break wraps around the shaft. It is:","options":["Torus fracture","Avulsion fracture","Transverse fracture","Spiral fracture"],"answer":"D","multi":false},{"id":157,"topic":"Musculoskeletal — Fracture classification","question":"Two bone fragments have lost their normal anatomical alignment. This is:","options":["Stable articulation","Nondisplaced fracture","Displaced fracture","Pure contusion"],"answer":"C","multi":false},{"id":158,"topic":"Musculoskeletal — Fracture classification","question":"Two fragments are driven into one another. This is:","options":["Avulsion fracture","Impacted fracture","Longitudinal fracture","Depressed fracture"],"answer":"B","multi":false},{"id":159,"topic":"Musculoskeletal — Fracture classification","question":"A skull fracture pushes bone fragments inward. It is:","options":["Pott's fracture","Depressed fracture","Torus fracture","Greenstick fracture"],"answer":"B","multi":false},{"id":160,"topic":"Musculoskeletal — Fracture classification","question":"Which term means a fracture is unlikely to shift with movement?","options":["Displaced","Stable","Comminuted","Unstable"],"answer":"B","multi":false},{"id":161,"topic":"Musculoskeletal — Fracture classification","question":"A child's distal radius buckles under compression without a complete break. It is:","options":["Torus fracture","Open fracture","Pott's fracture","Spiral fracture"],"answer":"A","multi":false},{"id":162,"topic":"Musculoskeletal — Fracture classification","question":"A young child's bone bends with tiny microfractures but does not completely snap. This is:","options":["Transverse fracture","Comminuted fracture","Bowing fracture","Depressed fracture"],"answer":"C","multi":false},{"id":163,"topic":"Musculoskeletal — Fracture classification","question":"One cortex cracks while the opposite side remains largely intact in a child's bone. This is:","options":["Greenstick fracture","Displaced transverse fracture","Skull depression","Complete comminuted fracture"],"answer":"A","multi":false},{"id":164,"topic":"Musculoskeletal — Fracture classification","question":"A tendon pulls off a small piece of bone at its attachment. This is:","options":["Spiral fracture","Torus fracture","Avulsion fracture","Impacted fracture"],"answer":"C","multi":false},{"id":165,"topic":"Musculoskeletal — Fracture classification","question":"A patient fractures the distal radius after falling on an outstretched hand. Which named fracture fits?","options":["Colles fracture","Pathologic fracture only","Vertebral compression fracture","Pott's fracture"],"answer":"A","multi":false},{"id":166,"topic":"Musculoskeletal — Fracture classification","question":"Which area is characteristic of a Pott's fracture?","options":["Midshaft humerus","Ankle region, especially the distal fibula","Distal radius alone","Skull vault"],"answer":"B","multi":false},{"id":167,"topic":"Musculoskeletal — Fracture classification","question":"A runner develops tiny cracks from repeated loading over many training sessions. This is:","options":["Neoplastic fracture","Open comminuted fracture","Avulsion fracture","Stress fracture"],"answer":"D","multi":false},{"id":168,"topic":"Musculoskeletal — Fracture classification","question":"A patient develops a fracture after minor pressure because of an underlying bone tumour. This is:","options":["Pathologic fracture","Bowing fracture","Torus fracture","Normal traumatic fracture"],"answer":"A","multi":false},{"id":169,"topic":"Musculoskeletal — Fracture classification","question":"What does \"extra-articular\" mean in a fracture description?","options":["A joint contains a hematoma","Fracture does not extend into the joint surface","Fracture directly crosses the joint surface","A joint is fully dislocated"],"answer":"B","multi":false},{"id":170,"topic":"Musculoskeletal — Fracture classification","question":"Which descriptor identifies where along a long bone a fracture lies?","options":["Proximal, midshaft or distal","Simple or comminuted","Stable or unstable","Open or closed"],"answer":"A","multi":false},{"id":171,"topic":"Musculoskeletal — Fracture classification","question":"What does \"angulation\" describe in a fracture?","options":["Status of overlying skin","Angle between displaced bone fragments","Time since injury","Number of fragments only"],"answer":"B","multi":false},{"id":172,"topic":"Musculoskeletal — Fracture classification","question":"What does \"displacement\" describe?","options":["Number of osteoblasts","Chemical makeup of the callus","Degree of tissue infection","How far fragments are out of alignment"],"answer":"D","multi":false},{"id":173,"topic":"Musculoskeletal — Fracture classification","question":"A fracture is complete but remains aligned and the skin is intact. Which description fits best?","options":["Subluxation without fracture","Bone infection only","Closed, nondisplaced fracture","Open, displaced fracture"],"answer":"C","multi":false},{"id":174,"topic":"Musculoskeletal — Fracture classification","question":"Which types are commonly classified as incomplete fractures? (Select all that apply.)","options":["Greenstick","Open comminuted fracture","Torus","Bowing"],"answer":"ACD","multi":true},{"id":175,"topic":"Musculoskeletal — Fracture classification","question":"Which terms describe fracture-line orientation? (Select all that apply.)","options":["Spiral","Oblique","Transverse","Osteomyelitis"],"answer":"ABC","multi":true},{"id":176,"topic":"Musculoskeletal — Fracture classification","question":"Which statements about causes and classifications of fracture are correct? (Select all that apply.)","options":["Every simple fracture means the skin is open","Pathologic fractures occur in weakened bone","Stress fractures can result from repeated loading","Comminuted means multiple fragments"],"answer":"BCD","multi":true},{"id":177,"topic":"Musculoskeletal — Fracture healing and complications","question":"Which finding is a common manifestation of fracture?","options":["Increased normal joint range","A new tumour capsule","Painless disappearance of bone","Pain, swelling and loss of function"],"answer":"D","multi":false},{"id":178,"topic":"Musculoskeletal — Fracture healing and complications","question":"What is the first stage of fracture healing?","options":["Remodeling","Hematoma formation","Bony callus formation","Fibrocartilaginous callus maturation"],"answer":"B","multi":false},{"id":179,"topic":"Musculoskeletal — Fracture healing and complications","question":"What is formed in the first week following a fracture?","options":["Permanent joint ankylosis","A fully remodeled cortex","Hematoma or procallus","Mature lamellar bone"],"answer":"C","multi":false},{"id":180,"topic":"Musculoskeletal — Fracture healing and complications","question":"What develops during approximately weeks 1-3?","options":["Malignant osteoid","Dead bone sequestrum","Fibrocartilaginous callus","Mature compact bone only"],"answer":"C","multi":false},{"id":181,"topic":"Musculoskeletal — Fracture healing and complications","question":"Which healing stage first replaces the soft callus with mineralized bony tissue?","options":["Initial muscle spasm","Fibrous nonunion","Hematoma formation","Bony callus formation"],"answer":"D","multi":false},{"id":182,"topic":"Musculoskeletal — Fracture healing and complications","question":"What is the last stage of fracture healing?","options":["Hematoma formation","Soft callus formation","Initial inflammation","Remodeling"],"answer":"D","multi":false},{"id":183,"topic":"Musculoskeletal — Fracture healing and complications","question":"Why is an early fibrocartilaginous callus not yet ready for weight-bearing?","options":["It is unrelated to the fracture","It contains no cells","It has already become dense compact bone","It has not achieved mature bone strength"],"answer":"D","multi":false},{"id":184,"topic":"Musculoskeletal — Fracture healing and complications","question":"What does fracture reduction mean?","options":["Production of new blood cells","Realignment of broken bone fragments","Infection of marrow","Removal of all bone tissue"],"answer":"B","multi":false},{"id":185,"topic":"Musculoskeletal — Fracture healing and complications","question":"What is the goal of fracture immobilization?","options":["Eliminate all osteoblasts","Increase unnecessary fragment motion","Maintain alignment and limit movement during healing","Prevent all new vessels"],"answer":"C","multi":false},{"id":186,"topic":"Musculoskeletal — Fracture healing and complications","question":"What does traction use to maintain fracture alignment?","options":["Heat from radiation","Calcium supplements only","Intra-articular urate crystals","A controlled pulling force"],"answer":"D","multi":false},{"id":187,"topic":"Musculoskeletal — Fracture healing and complications","question":"What is internal fixation?","options":["Surgically placed hardware to hold fragments aligned","A splint placed only outside the skin","A joint injection","A natural stage of fracture healing"],"answer":"A","multi":false},{"id":188,"topic":"Musculoskeletal — Fracture healing and complications","question":"What is a nonunion?","options":["Fracture heals in a correct position","Fracture heals too rapidly","Fracture ends fail to unite","Bone density becomes excessive"],"answer":"C","multi":false},{"id":189,"topic":"Musculoskeletal — Fracture healing and complications","question":"What is a delayed union?","options":["Bone heals at an incorrect angle only","Fracture healing takes abnormally long","Bone ends unite immediately","A clot enters the pulmonary artery"],"answer":"B","multi":false},{"id":190,"topic":"Musculoskeletal — Fracture healing and complications","question":"What is a malunion?","options":["A fracture heals in an incorrect position","A fracture becomes infected with H. pylori","An incomplete fracture in a child","Bone ends have never joined"],"answer":"A","multi":false},{"id":191,"topic":"Musculoskeletal — Fracture healing and complications","question":"What material can enter the circulation in a fat embolism after fracture?","options":["Collagenase from cancer cells","Healthy red blood cells only","Uric acid crystals from synovial fluid","Fat from yellow marrow"],"answer":"D","multi":false},{"id":192,"topic":"Musculoskeletal — Fracture healing and complications","question":"Which statements about fracture healing are correct? (Select all that apply.)","options":["Remodeling may continue for months or years","Young people often heal faster","Inadequate blood supply may delay union","Fibrocartilaginous callus is immediately as strong as mature bone"],"answer":"ABC","multi":true},{"id":193,"topic":"Musculoskeletal — Fracture healing and complications","question":"What is a possible consequence of major bleeding from a fracture?","options":["Increased osteoid mineralization","Hyperuricemia","Hypovolemic shock","SIADH"],"answer":"C","multi":false},{"id":194,"topic":"Musculoskeletal — Bone diseases","question":"Which bone disease causes reduced mineralized bone density and fragility?","options":["Osteomyelitis","Osteomalacia","Paget's disease","Osteoporosis"],"answer":"D","multi":false},{"id":195,"topic":"Musculoskeletal — Bone diseases","question":"What is osteopenia?","options":["A bacterial bone infection","Complete failure of fracture union","Excess osteoid deposition","Reduced bone mass less severe than osteoporosis"],"answer":"D","multi":false},{"id":196,"topic":"Musculoskeletal — Bone diseases","question":"In osteoporosis, which process generally exceeds new bone formation?","options":["Antibody synthesis","Cartilage lubrication","Bone resorption","Tendon repair"],"answer":"C","multi":false},{"id":197,"topic":"Musculoskeletal — Bone diseases","question":"Why does osteoporosis risk rise after menopause?","options":["Estrogen levels decline","All bone mineralizes faster","Osteoclasts stop functioning permanently","PTH becomes absent"],"answer":"A","multi":false},{"id":198,"topic":"Musculoskeletal — Bone diseases","question":"Which fracture sites are especially associated with osteoporosis?","options":["Hip and vertebrae","Only jaw and fingers","Only cartilage","Only skull and toes"],"answer":"A","multi":false},{"id":199,"topic":"Musculoskeletal — Bone diseases","question":"What does a bone mineral density test help assess?","options":["Bacterial strain identity","Severity of a sprain","Osteoporosis and fracture risk","Tumour stage only"],"answer":"C","multi":false},{"id":200,"topic":"Musculoskeletal — Bone diseases","question":"What is osteomalacia?","options":["Failure of an infection to clear","Loss of every bone cell","Inadequate mineralization of newly formed osteoid","Excess urate in joints"],"answer":"C","multi":false},{"id":201,"topic":"Musculoskeletal — Bone diseases","question":"What is osteomalacia called in children?","options":["Rickets","Osteopenia","Gout","Pannus"],"answer":"A","multi":false},{"id":202,"topic":"Musculoskeletal — Bone diseases","question":"What is a common cause of osteomalacia?","options":["Excess bone mineral density","Excess testosterone only","Vitamin D deficiency","Increased synovial cartilage"],"answer":"C","multi":false},{"id":203,"topic":"Musculoskeletal — Bone diseases","question":"Which symptom pattern suggests osteomalacia?","options":["Bone pain, muscle weakness and waddling gait","Cough with pleural effusion only","Completely painless dislocation","Sudden red swollen toe only"],"answer":"A","multi":false},{"id":204,"topic":"Musculoskeletal — Bone diseases","question":"Which disease produces disorganized, enlarged and fragile bone from abnormal remodeling?","options":["Simple sprain","Paget's disease","Osteoarthritis","Leukopenia"],"answer":"B","multi":false},{"id":205,"topic":"Musculoskeletal — Bone diseases","question":"Which blood marker is commonly raised in Paget's disease of bone?","options":["Hemoglobin","Erythropoietin","Troponin","Alkaline phosphatase"],"answer":"D","multi":false},{"id":206,"topic":"Musculoskeletal — Bone diseases","question":"What is osteomyelitis?","options":["Loss of cartilage from mechanical wear","High serum uric acid","Infection and inflammation of bone","An inherited muscle tumour"],"answer":"C","multi":false},{"id":207,"topic":"Musculoskeletal — Bone diseases","question":"Which bacterium commonly causes osteomyelitis?","options":["Staphylococcus aureus","Helicobacter pylori","Hepatitis B virus","Human papillomavirus"],"answer":"A","multi":false},{"id":208,"topic":"Musculoskeletal — Bone diseases","question":"What is a sequestrum in osteomyelitis?","options":["A joint's synovial lining","A fragment of dead bone","New bone surrounding a dead area","An osteoclast's nucleus"],"answer":"B","multi":false},{"id":209,"topic":"Musculoskeletal — Bone diseases","question":"What is an involucrum?","options":["A dead fragment without blood supply","An abnormally large red blood cell","New bone formed around an area of dead bone","A fracture line running lengthwise"],"answer":"C","multi":false},{"id":210,"topic":"Musculoskeletal — Bone diseases","question":"Which statements about bone disorders are correct? (Select all that apply.)","options":["Osteomyelitis is always caused by a virus","Paget's disease may cause abnormal bone enlargement","Osteomalacia involves defective mineralization","Osteoporosis increases fragility fracture risk"],"answer":"BCD","multi":true},{"id":211,"topic":"Musculoskeletal — Bone diseases","question":"How does endogenous osteomyelitis reach bone?","options":["Through the bloodstream from another infection site","Directly through an open wound only","Through excess osteoblast activity","By crystals precipitating in joints"],"answer":"A","multi":false},{"id":212,"topic":"Musculoskeletal — Bone diseases","question":"What is a common treatment approach for bacterial osteomyelitis?","options":["Only a soft cast without medication","Chemotherapy alone","Prolonged targeted antibiotics, sometimes with surgery","Trastuzumab"],"answer":"C","multi":false},{"id":213,"topic":"Musculoskeletal — Bone diseases","question":"Which activity is generally recommended to help maintain bone strength in osteoporosis prevention?","options":["Complete lifelong immobilization","Appropriate weight-bearing exercise","Excessive unprotected sun exposure","Avoiding all dietary calcium"],"answer":"B","multi":false},{"id":214,"topic":"Musculoskeletal — Joint diseases","question":"What does arthritis mean?","options":["A tendon tear","Infection of the bone marrow only","Inflammation of a joint","A simple bone fracture"],"answer":"C","multi":false},{"id":215,"topic":"Musculoskeletal — Joint diseases","question":"Which arthritis is most associated with degeneration of articular cartilage?","options":["Osteoarthritis","Gout","Rheumatoid arthritis","Septicemia"],"answer":"A","multi":false},{"id":216,"topic":"Musculoskeletal — Joint diseases","question":"Which joint condition is a systemic autoimmune disease?","options":["Rheumatoid arthritis","Osteomalacia","Avulsion fracture","Osteoarthritis"],"answer":"A","multi":false},{"id":217,"topic":"Musculoskeletal — Joint diseases","question":"Which tissue is initially inflamed in rheumatoid arthritis?","options":["Osteon central canal","Skin epidermis","Synovial membrane","Yellow marrow"],"answer":"C","multi":false},{"id":218,"topic":"Musculoskeletal — Joint diseases","question":"What is rheumatoid factor (RF)?","options":["A type of uric acid crystal","An enzyme making bone osteoid","A joint lubricant","An autoantibody associated with rheumatoid arthritis"],"answer":"D","multi":false},{"id":219,"topic":"Musculoskeletal — Joint diseases","question":"What is pannus in rheumatoid arthritis?","options":["A fat embolus","A fracture splint","A simple skin bruise","Inflamed proliferating synovial tissue that damages cartilage"],"answer":"D","multi":false},{"id":220,"topic":"Musculoskeletal — Joint diseases","question":"Which finding is commonly seen on osteoarthritis X-rays?","options":["Urate tophi in marrow only","Large blood clots in lungs","Joint space narrowing and osteophytes","Viral DNA integration"],"answer":"C","multi":false},{"id":221,"topic":"Musculoskeletal — Joint diseases","question":"Which disease involves deposition of monosodium urate crystals?","options":["Gout","Osteoarthritis","Rheumatoid arthritis","Paget's disease"],"answer":"A","multi":false},{"id":222,"topic":"Musculoskeletal — Joint diseases","question":"What is hyperuricemia?","options":["High red blood cell count","High uric acid level in the blood","Loss of all platelets","Low serum calcium"],"answer":"B","multi":false},{"id":223,"topic":"Musculoskeletal — Joint diseases","question":"What are tophi?","options":["Large deposits of urate crystals in tissues","Pools of blood after contusion","Ligaments torn from bones","New capillaries growing inside cancer"],"answer":"A","multi":false},{"id":224,"topic":"Musculoskeletal — Joint diseases","question":"Which attack pattern is characteristic of acute gout?","options":["Gradual painless cartilage growth only","Sudden painful, red and swollen joint, often at night","Constant painless bone enlargement","Complete loss of joint surface contact only"],"answer":"B","multi":false},{"id":225,"topic":"Musculoskeletal — Joint diseases","question":"Why may gout affect distal joints such as the big toe?","options":["Those joints contain no cartilage","Uric acid is only produced in toes","Distal joints lack any blood","Lower temperature favors urate crystal precipitation"],"answer":"D","multi":false},{"id":226,"topic":"Musculoskeletal — Joint diseases","question":"Which statements correctly distinguish joint disorders? (Select all that apply.)","options":["Rheumatoid arthritis may have fatigue and systemic symptoms","Gout involves inflammatory responses to urate crystals","Osteoarthritis often worsens with joint use","Gout is primarily caused by loss of articular cartilage"],"answer":"ABC","multi":true},{"id":227,"topic":"Musculoskeletal — Joint diseases","question":"Which biochemical substance is the end product of purine metabolism and is central to gout?","options":["Collagen","Osteoid","Uric acid","Hemoglobin"],"answer":"C","multi":false}];
+    const TOPICS = [];
+    for (const q of QUESTIONS) {
+      const last = TOPICS[TOPICS.length-1];
+      if (last && last.name === q.topic) last.last = q.id;
+      else TOPICS.push({ name:q.topic, first:q.id, last:q.id });
+    }
+    const DECKS = [
+      {key:"all",label:"All questions",from:1,to:227},
+      {key:"c1",label:"Cancer Part 1",from:1,to:57},
+      {key:"c2",label:"Cancer Part 2",from:58,to:120},
+      {key:"msk",label:"Musculoskeletal",from:121,to:227}
+    ];
+    const LETTERS = "ABCD";
+    const STORAGE_KEY = "path-practice-lab-227-v1";
+    const $ = id => document.getElementById(id);
+    const defaultState = () => ({deck:"all", current:1, answers:{},checked:{},theme:"light"});
+    let state = defaultState();
+    let storageOK = true;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data && typeof data === "object") state = {...defaultState(),...data};
+      }
+    } catch(e) {storageOK = false;}
+    if (!DECKS.some(d=>d.key === state.deck)) state.deck="all";
+    if (!Number.isInteger(state.current)||state.current<1||state.current>227) state.current=1;
+    if (!state.answers || typeof state.answers !== "object") state.answers={};
+    if (!state.checked || typeof state.checked !== "object") state.checked={};
+    if (!["light","dark"].includes(state.theme)) state.theme="light";
+    const getDeck=()=>DECKS.find(d=>d.key===state.deck);
+    const inDeck=id=>id>=getDeck().from&&id<=getDeck().to;
+    if(!inDeck(state.current)) state.current=getDeck().from;
+    const getQuestion=()=>QUESTIONS[state.current-1];
+    const correct=id=>state.checked[id] && (state.answers[id]||"")===QUESTIONS[id-1].answer;
+    const deckQuestions=()=>QUESTIONS.slice(getDeck().from-1,getDeck().to);
+    const checkedCount=(from,to)=>{let n=0;for(let i=from;i<=to;i++)if(state.checked[i])n++;return n;};
+    const correctCount=(from,to)=>{let n=0;for(let i=from;i<=to;i++)if(correct(i))n++;return n;};
+    const labelText=q=>q.topic.replace("Cancer I — ","Cancer Part 1 · ").replace("Cancer II — ","Cancer Part 2 · ").replace("Musculoskeletal — ","MSK · ");
+    function save(){
+      try {localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); storageOK=true;}
+      catch(e) {storageOK=false;}
+      $("saveMessage").textContent=storageOK?"Progress saved on this device":"Progress cannot be saved in this browser";
+      $("saveIndicator").title=$("saveMessage").textContent;
+      $("saveIndicator").querySelector(".save-dot").style.background=storageOK?"#2ca077":"#ce7b46";
+    }
+    function setDeck(key){
+      state.deck=key;
+      state.current=getDeck().from;
+      save();render();scrollToQuiz();
+    }
+    function navigate(id){
+      if(!Number.isInteger(id)||!inDeck(id))return;
+      state.current=id;save();render();scrollToQuiz();
+    }
+    function scrollToQuiz(){if(window.innerWidth<=760)$("quiz").scrollIntoView({behavior:"smooth",block:"start"});}
+    function selectAnswer(letter,selected){
+      const q=getQuestion();
+      if(state.checked[q.id])return;
+      if(q.multi){
+        const set = new Set((state.answers[q.id]||"").split("").filter(Boolean));
+        if(selected)set.add(letter); else set.delete(letter);
+        state.answers[q.id]=[...set].sort().join("");
+      } else state.answers[q.id]=letter;
+      save();renderOptions();renderAction();
+    }
+    function checkAnswer(){
+      const q=getQuestion();
+      if(state.checked[q.id]||!state.answers[q.id])return;
+      state.checked[q.id]=true;save();render();
+      $("answerFeedback").focus?.();
+    }
+    function randomQuestion(){
+      const {from,to}=getDeck();
+      let n=from+Math.floor(Math.random()*(to-from+1));
+      if(n===state.current && to>from)n=n===to?from:n+1;
+      navigate(n);
+    }
+    function nextUnchecked(){
+      const {from,to}=getDeck();
+      for(let shift=1;shift<=to-from+1;shift++){
+        const id=from+(state.current-from+shift)%(to-from+1);
+        if(!state.checked[id]){navigate(id);return;}
+      }
+      alert("You've checked every question in this selection. You can review any question or switch lectures.");
+    }
+    function renderDeckTabs(){
+      $("deckTabs").replaceChildren();
+      for(const d of DECKS){
+        const b=document.createElement("button");
+        b.className="deck-button"+(state.deck===d.key?" active":"");
+        b.type="button";
+        b.setAttribute("aria-pressed",String(state.deck===d.key));
+        const title=document.createTextNode(d.label+" ");
+        const small=document.createElement("small");small.textContent=`${d.to-d.from+1}`;
+        b.append(title,small);b.onclick=()=>setDeck(d.key);
+        $("deckTabs").append(b);
+      }
+    }
+    function renderOptions(){
+      const q=getQuestion(), chosen=state.answers[q.id]||"", done=!!state.checked[q.id];
+      const grid=$("options");grid.replaceChildren();
+      for(let i=0;i<4;i++){
+        const letter=LETTERS[i];
+        const selected=chosen.includes(letter);
+        const shouldBe=q.answer.includes(letter);
+        const label=document.createElement("label");
+        label.className="option"+(selected?" selected":"")+(done?" locked":"")+(done&&shouldBe?" correct":"")+(done&&selected&&!shouldBe?" wrong":"");
+        const input=document.createElement("input");
+        input.type=q.multi?"checkbox":"radio";
+        input.name="quizChoice";input.value=letter;input.checked=selected;input.disabled=done;
+        input.setAttribute("aria-label",`${letter}. ${q.options[i]}`);
+        input.onchange=e=>selectAnswer(letter,e.target.checked);
+        const badge=document.createElement("span");badge.className="letter";badge.textContent=letter;
+        const optionText=document.createElement("span");optionText.className="option-label";optionText.textContent=q.options[i];
+        label.append(input,badge,optionText);
+        if(done && (shouldBe || (selected&&!shouldBe))){
+          const mark=document.createElement("span");mark.className="answer-mark";
+          mark.textContent=shouldBe?"✓":"×";
+          mark.setAttribute("aria-hidden","true");label.append(mark);
+        }
+        grid.append(label);
+      }
+    }
+    function renderAction(){
+      const q=getQuestion(),done=!!state.checked[q.id],given=state.answers[q.id]||"";
+      const check=$("checkAnswer");check.style.display=done?"none":"block";
+      check.disabled=!given;
+      const area=$("answerFeedback");area.replaceChildren();
+      if(!done)return;
+      const good=given===q.answer;
+      const box=document.createElement("div");box.className="feedback"+(good?"":" bad");
+      const heading=document.createElement("strong");heading.textContent=good?"✓ Correct!":"✕ Not quite";
+      const detail=document.createElement("p");
+      const lead=document.createElement("b");lead.textContent=good?"Correct answer: ":"Correct answer: ";
+      detail.append(lead,document.createTextNode(q.answer.split("").map(l=>`${l}. ${q.options[LETTERS.indexOf(l)]}`).join(" · ")));
+      box.append(heading,detail);area.append(box);
+    }
+    function renderQuestion(){
+      const q=getQuestion(),d=getDeck();
+      $("questionCount").textContent=`Question ${q.id} of 227 · ${q.id-d.from+1} / ${d.to-d.from+1} in selection`;
+      $("questionType").textContent=q.multi?"SELECT ALL THAT APPLY":"ONE ANSWER";
+      $("questionText").textContent=q.question;
+      $("topicLabel").textContent=labelText(q);
+      $("questionInstruction").textContent=q.multi?"Select every correct option. All correct choices are required for credit.":"Select the single best answer.";
+      const pct=100*(q.id-d.from+1)/(d.to-d.from+1);
+      $("positionFill").style.width=pct+"%";
+      $("questionTrack").setAttribute("aria-valuenow",String(Math.round(pct)));
+      $("previous").disabled=q.id===d.from;
+      $("next").disabled=q.id===d.to;
+      renderOptions();renderAction();
+    }
+    function renderStats(){
+      const d=getDeck(),checked=checkedCount(d.from,d.to),right=correctCount(d.from,d.to),total=d.to-d.from+1;
+      $("statChecked").textContent=`${checked} / ${total}`;
+      $("statCorrect").textContent=String(right);
+      $("statAccuracy").textContent=checked?`${Math.round(100*right/checked)}%`:"—";
+      $("checkedStatus").textContent=`${checked} of ${total} checked · ${right} correct`;
+      $("sideProgress").textContent=`${checked} / ${total}`;
+      const percent=Math.round(100*checked/total);
+      $("sidePercent").textContent=`${percent}% checked`;
+      $("sideProgressFill").style.width=percent+"%";
+      $("sideProgressTrack").setAttribute("aria-valuenow",String(percent));
+      $("jumpNumber").min=d.from;$("jumpNumber").max=d.to;
+      $("jumpNumber").placeholder=`${d.from}–${d.to}`;
+      $("jumpHint").textContent=`Question numbers ${d.from}–${d.to}.`;
+      $("nextUnchecked").disabled=checked===total;
+    }
+    function renderTopics(){
+      const list=$("topicList");list.replaceChildren();
+      const {from,to}=getDeck();
+      for(const t of TOPICS){
+        if(t.last<from||t.first>to)continue;
+        const total=t.last-t.first+1, seen=checkedCount(t.first,t.last),right=correctCount(t.first,t.last);
+        const btn=document.createElement("button");btn.type="button";
+        btn.className="topic-row"+(state.current>=t.first&&state.current<=t.last?" active":"");
+        btn.title=`${right} correct out of ${seen} checked · Go to question ${t.first}`;
+        const top=document.createElement("span");top.className="topic-row-top";
+        const name=document.createElement("span");name.className="topic-name";name.textContent=t.name.replace(/^Cancer I — /,"" ).replace(/^Cancer II — /,"").replace(/^Musculoskeletal — /,"");
+        const count=document.createElement("span");count.className="topic-count";count.textContent=`${right}/${seen} correct`;
+        top.append(name,count);
+        const progress=document.createElement("span");progress.className="topic-progress";
+        const fill=document.createElement("span");fill.className="topic-progress-fill";fill.style.width=100*seen/total+"%";
+        progress.append(fill);btn.append(top,progress);
+        btn.onclick=()=>navigate(t.first);list.append(btn);
+      }
+    }
+    function renderTheme(){
+      document.documentElement.dataset.theme=state.theme;
+      $("themeToggle").textContent=state.theme==="light"?"☾":"☀";
+      $("themeToggle").title=state.theme==="light"?"Switch to dark mode":"Switch to light mode";
+    }
+    function render(){renderTheme();renderDeckTabs();renderQuestion();renderStats();renderTopics();}
+    $("checkAnswer").onclick=checkAnswer;
+    $("previous").onclick=()=>navigate(state.current-1);
+    $("next").onclick=()=>navigate(state.current+1);
+    $("random").onclick=randomQuestion;
+    $("nextUnchecked").onclick=nextUnchecked;
+    $("themeToggle").onclick=()=>{state.theme=state.theme==="light"?"dark":"light";save();renderTheme();};
+    $("jumpForm").onsubmit=e=>{
+      e.preventDefault();const id=Number($("jumpNumber").value);
+      if(!Number.isInteger(id)||!inDeck(id)){
+        $("jumpNumber").setCustomValidity(`Enter a number from ${getDeck().from} to ${getDeck().to}`);
+        $("jumpNumber").reportValidity();return;
+      }
+      $("jumpNumber").setCustomValidity("");$("jumpNumber").value="";navigate(id);
+    };
+    $("jumpNumber").addEventListener("input",()=>$("jumpNumber").setCustomValidity(""));
+    $("resetButton").onclick=()=>{
+      if(!confirm("Reset all 227 questions? This will delete your checked answers and scores on this device."))return;
+      const keepTheme=state.theme;state=defaultState();state.theme=keepTheme;save();render();scrollToQuiz();
+    };
+    $("exportButton").onclick=()=>{
+      const data=JSON.stringify({format:"path-practice-lab-progress",version:1,exportedAt:new Date().toISOString(),state},null,2);
+      const url=URL.createObjectURL(new Blob([data],{type:"application/json"}));
+      const a=document.createElement("a");a.href=url;a.download="PATH_Practice_Progress.json";
+      document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+    };
+    $("importButton").onclick=()=>$("importFile").click();
+    $("importFile").onchange=async e=>{
+      const file=e.target.files?.[0];if(!file)return;
+      try{
+        const data=JSON.parse(await file.text());
+        if(data?.format!=="path-practice-lab-progress"||data.version!==1||!data.state||typeof data.state!=="object") throw new Error("Not a recognized PATH Practice Lab progress file.");
+        if(!confirm("Restore answers and scores from this backup? Your current progress will be replaced."))return;
+        const restored=data.state;
+        state=defaultState();
+        state.deck=DECKS.some(d=>d.key===restored.deck)?restored.deck:"all";
+        state.current=Number.isInteger(restored.current)&&restored.current>=1&&restored.current<=227?restored.current:1;
+        if(!inDeck(state.current))state.current=getDeck().from;
+        if(restored.answers&&typeof restored.answers==="object"){
+          for(const [k,v] of Object.entries(restored.answers))if(+k>=1&&+k<=227&&typeof v==="string"&&/^[A-D]{0,4}$/.test(v))state.answers[k]=[...new Set(v)].sort().join("");
+        }
+        if(restored.checked&&typeof restored.checked==="object"){
+          for(const [k,v] of Object.entries(restored.checked))if(+k>=1&&+k<=227&&v===true)state.checked[k]=true;
+        }
+        state.theme=["light","dark"].includes(restored.theme)?restored.theme:"light";
+        save();render();scrollToQuiz();
+      }catch(err){alert("Could not restore progress: "+err.message);}
+      finally{e.target.value="";}
+    };
+    document.addEventListener("keydown",e=>{
+      const el=e.target;
+      if(e.ctrlKey||e.metaKey||e.altKey||e.shiftKey||["INPUT","TEXTAREA","SELECT","BUTTON"].includes(el?.tagName)||el?.isContentEditable)return;
+      if("1234".includes(e.key) && e.key.length===1){
+        const q=getQuestion();if(state.checked[q.id])return;
+        const l=LETTERS[Number(e.key)-1];
+        selectAnswer(l,q.multi?!(state.answers[q.id]||"").includes(l):true);e.preventDefault();
+      } else if(e.key==="ArrowRight") {navigate(state.current+1);e.preventDefault();}
+      else if(e.key==="ArrowLeft") {navigate(state.current-1);e.preventDefault();}
+      else if(e.key==="Enter") {if(!state.checked[state.current])checkAnswer();else navigate(state.current+1);e.preventDefault();}
+    });
+    render();save();
+  </script>
+</body>
+</html>
